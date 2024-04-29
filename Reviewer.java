@@ -80,9 +80,7 @@ public class Reviewer {
                 }
             }
 
-            if (!studentFound) {
-                throw new IllegalArgumentException("Student not found. Please enter a valid name.");
-            }
+          
             applicantReportoutputFile.write("===================================\n");
             applicantReportoutputFile.write("Previously awarded scholarships:\n");
             String awardedScholarshipsLine;
@@ -100,8 +98,7 @@ public class Reviewer {
             System.out.println("personal_info.txt and awarded_scholarships.txt read correctly");
             System.out.println("Applicant report generated and saved to 'reviewer_applicant_report.txt'");
 
-        } catch (IOException except) {
-            except.printStackTrace();
+        } 
         }
     }
 
@@ -137,15 +134,12 @@ public class Reviewer {
                 }
             }
 
-            if (!studentFound) {
-                throw new IllegalArgumentException("Student not found. Please enter a valid name.");
-            }
+            
             System.out.println("===================================");
             System.out.println("ReviewerScholarships.txt read correctly.");
             System.out.println("Scholarships for " + studentName + " written to ScholarshipsToReview.txt");
 
-        } catch (IOException except) {
-            except.printStackTrace();
+        
         }
     }
 
@@ -170,9 +164,7 @@ public class Reviewer {
                 }
             }
 
-            if (!scholarshipFound) {
-                throw new IllegalArgumentException("Scholarship not found or invalid name. Please enter a valid scholarship name.");
-            }
+           
             scholarshipSummaryReport.write("===================================\n");
             scholarshipSummaryReport.write("Scholarship Summary Report for " + scholarshipName + ":\n");
             scholarshipSummaryReport.write("============================\n");
@@ -196,8 +188,7 @@ public class Reviewer {
             System.out.println("ScholarshipData.txt and ScholarshipStatus.txt read correctly.");
             System.out.println("Scholarship Summary Report for " + scholarshipName + " generated and saved to 'ScholarshipSummaryReport.txt'");
 
-        } catch (IOException except) {
-            throw new IOException("Error", except);
+        } 
         }
     }
 
