@@ -186,34 +186,6 @@ public class Admin {
         }
     }
 
-    private static String getAwardedStudents(String scholarshipName, BufferedReader scholarshipStatus) throws IOException {
-        StringBuilder awardedStudents = new StringBuilder();
-
-        String scholarshipStatusLine;
-        while ((scholarshipStatusLine = scholarshipStatus.readLine()) != null) {
-            String[] status = scholarshipStatusLine.split(",");
-            String studentName = status[0].trim();
-
-            for (int i = 1; i < status.length; i++) {
-                String[] scholarshipInfo = status[i].split(":");
-                if (scholarshipInfo.length == 2) {
-                    String statusScholarshipName = scholarshipInfo[0].trim();
-                    String awardStatus = scholarshipInfo[1].trim();
-
-                    if (awardStatus.equalsIgnoreCase("Awarded") && statusScholarshipName.equalsIgnoreCase(scholarshipName)) {
-                        awardedStudents.append(studentName).append(", ");
-                    }
-                }
-            }
-        }
-
-        // Remove trailing comma and space
-        if (awardedStudents.length() > 0) {
-            awardedStudents.setLength(awardedStudents.length() - 2);
-        }
-
-        return awardedStudents.toString();
-    }
 
     public static void generateDisbursementReport(Scanner scnr) throws IOException, ParseException {
         try (BufferedReader scholarshipData = new BufferedReader(new FileReader("ScholarshipData.txt"));
@@ -264,17 +236,7 @@ public class Admin {
                     }
                 }
 
-                if (!scholarshipFound) {
-                    throw new IllegalArgumentException("Scholarship not found. Please enter a valid name.");
-                }
-            } else {
-                System.out.println("Recipient not awarded the specified scholarship. Unable to generate the disbursement report.");
-            }
-
-        } catch (IOException | ParseException e) {
-            throw e; // Re-throw the exception to be caught by the calling method
-        }
-    }
+              
 
     private static boolean isRecipientAwarded(String recipientName, String scholarshipName, BufferedReader scholarshipStatus) throws IOException {
         String scholarshipStatusLine;
@@ -291,16 +253,7 @@ public class Admin {
 
                         if (awardStatus.equalsIgnoreCase("Awarded") && statusScholarshipName.equalsIgnoreCase(scholarshipName)) {
                             return true;
-                        }
-                    }
-                }
-                // If the recipient is found but not awarded the specified scholarship
-                return false;
-            }
-        }
-
-        // Recipient not found
-        return false;
+                 
         
     }
     
