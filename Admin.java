@@ -139,10 +139,9 @@ public class Admin {
                 default:
                     System.out.println("Wrong report choice for Admin");
             }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace(); // or handle the exception as needed
+        }  // or handle the exception as needed
         }
-    }
+    
 
     public static void generateScholarshipSummaryReport(Scanner scnr) throws IOException {
         try (BufferedReader scholarshipData = new BufferedReader(new FileReader("ScholarshipData.txt"));
@@ -181,8 +180,7 @@ public class Admin {
             System.out.println("ScholarshipData.txt and ScholarshipStatus.txt read correctly.");
             System.out.println("Scholarship Summary Report for " + scholarshipName + " generated and saved to 'ScholarshipSummaryReport.txt'");
 
-        } catch (IOException e) {
-            throw e; // Re-throw the exception to be caught by the calling method
+         // Re-throw the exception to be caught by the calling method
         }
     }
 
@@ -208,11 +206,7 @@ public class Admin {
         }
 
         // Remove trailing comma and space
-        if (awardedStudents.length() > 0) {
-            awardedStudents.setLength(awardedStudents.length() - 2);
-        }
-
-        return awardedStudents.toString();
+        
     }
 
     public static void generateDisbursementReport(Scanner scnr) throws IOException, ParseException {
