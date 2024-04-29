@@ -4,6 +4,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+import java.io.File;
+import javax.crypto.SecretKey;
 
 public class Donor {
     private static boolean menu = true;
@@ -29,6 +31,27 @@ public class Donor {
                 }
                 generateDonorReport(reportChoice, scnr);
             }
+        }
+        try {
+            // Assume outputFile is the file you want to encrypt and save
+            File reportFile = new File("donor_Report.txt");
+            SecretKey key = CryptoUtils.generateKey();  // Generate a new encryption key
+            
+            // Encrypt the file
+            byte[] encryptedData = CryptoUtils.encryptFile(reportFile, key);
+            File encryptedFile = new File("Encrypteddonor_Report.txt");
+            CryptoUtils.writeToFile(encryptedFile, encryptedData);
+            
+            // Compute and save the hash for later verification
+            String hash = CryptoUtils.computeHash(encryptedData);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("reportHash.txt"))) {
+                writer.write(hash);
+            }
+            
+            System.out.println("Report encrypted and hash saved.");
+        } catch (Exception e) {
+            System.out.println("Error encrypting report: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
