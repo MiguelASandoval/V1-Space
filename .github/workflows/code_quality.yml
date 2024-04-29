@@ -5,7 +5,7 @@ on:
   push:
     branches: # Specify your branches here
       - codespace-animated-invention-45rwgx7rjp429w9 # The 'main' branch
-      - 'releases/*' # The release branches
+      - codespace-animated-invention-45rwgx7rjp429w9 # The release branches
 
 jobs:
   qodana:
