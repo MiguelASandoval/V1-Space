@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,9 +9,90 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
+import java.io.File;
+import javax.crypto.SecretKey;
+
 
 public class Admin {
+
+
+    public static void accessEncryptedAdminReports(Scanner scnr) {
+        System.out.println("Accessing Encrypted Admin Reports:");
+        File encryptedFile = new File("EncryptedScholarshipSummaryReport.txt");
+        File hashFile = new File("reportHash.txt");
+
+        try {
+            SecretKey secretKey = CryptoUtils.loadKeyFromFile(hashFile.getAbsolutePath());
+            File decryptedFile = CryptoUtils.decryptToFile(encryptedFile, secretKey, "tempDecryptedReport.txt");
+            CryptoUtils.FileOpener.openFile(decryptedFile);
+            System.out.println("Report has been opened.");
+        } catch (Exception e) {
+            System.out.println("Failed to load key or decrypt file: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+
+    public static String getDecryptedReportContent(File encryptedFile, SecretKey secretKey) {
+        try {
+            byte[] decryptedData = CryptoUtils.decryptFile(encryptedFile, secretKey);
+            return new String(decryptedData);
+        } catch (Exception e) {
+            System.out.println("Error decrypting the report: " + e.getMessage());
+            e.printStackTrace();
+            return null; // or handle more gracefully depending on your error handling strategy
+        }
+    }
+
+
+    public class ReportProcessor {
+        public static void processAndDisplayReport(File encryptedFile, SecretKey secretKey) {
+            String reportContent = Admin.getDecryptedReportContent(encryptedFile, secretKey);
+            if (reportContent != null) {
+                // Assume the report is structured as CSV
+                String[] lines = reportContent.split("\n");
+                for (String line : lines) {
+                    String[] columns = line.split(",");
+                    // Process columns as needed, for example:
+                    System.out.println("Processed data: " + columns[0]); // Just an example
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        File encryptedFile = new File("EncryptedScholarshipSummaryReport.txt");
+        File keyFile = new File("AESKey.key"); // Ensure the key is stored securely
+        try {
+            SecretKey secretKey = CryptoUtils.loadKeyFromFile("AESKey.key");
+            if (CryptoUtils.verifyReportIntegrity(encryptedFile, new File("reportHash.txt"))) {
+                ReportProcessor.processAndDisplayReport(encryptedFile, secretKey);
+            } else {
+                System.out.println("File integrity check failed. Cannot process the report.");
+            }
+        } catch (Exception e) {
+            System.out.println("Failed to load key or process file: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    
+    public static void displayDecryptedReport(File encryptedFile, SecretKey secretKey) {
+        try {
+            byte[] decryptedData = CryptoUtils.decryptFile(encryptedFile, secretKey);
+            String reportContent = new String(decryptedData);
+            System.out.println("Decrypted Report Content:");
+            System.out.println(reportContent);
+        } catch (Exception e) {
+            System.out.println("Error decrypting the report: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
+
     public static void generateAdminReports(Scanner scnr) {
+        
         
         System.out.println("============================");
         System.out.println("Admin Reports:");
@@ -20,7 +102,30 @@ public class Admin {
 
         int reportChoice = ReportEngineTest.getReportChoice(scnr);
         generateAdminReport(reportChoice, scnr);
+
+          try {
+            
+            File reportFile = new File("ScholarshipSummaryReport.txt");
+            SecretKey key = CryptoUtils.generateKey();  // Generate a new encryption key
+            
+            // Encrypt the file
+            byte[] encryptedData = CryptoUtils.encryptFile(reportFile, key);
+            File encryptedFile = new File("EncryptedScholarshipSummaryReport.txt");
+            CryptoUtils.writeToFile(encryptedFile, encryptedData);
+            
+            // Compute and save the hash for later verification
+            String hash = CryptoUtils.computeHash(encryptedData);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("reportHash.txt"))) {
+                writer.write(hash);
+            }
+            
+            System.out.println("Report encrypted and hash saved.");
+        } catch (Exception e) {
+            System.out.println("Error encrypting report: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+    
 
     private static void generateAdminReport(int choice, Scanner scnr) {
         try {
@@ -196,5 +301,7 @@ public class Admin {
 
         // Recipient not found
         return false;
+        
     }
+    
 }
